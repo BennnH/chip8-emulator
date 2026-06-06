@@ -2,10 +2,12 @@
 
 #include <cstdint>
 #include <string>
+#include <random>
 
 class Chip8
 {
 public:
+    Chip8() noexcept;
     void LoadROM(const std::string& filename);
 
 private:
@@ -20,4 +22,29 @@ private:
         uint8_t keypad[16]{};
         uint32_t display[64 * 32]{};
         uint16_t opcode{};
+
+        std::mt19937 randGen;
+        std::uniform_int_distribution<uint8_t> randByte;
+
+        // Opcodes
+        void OP_00E0();
+        void OP_00EE();
+        void OP_1nnn();
+        void OP_2nnn();
+        void OP_3xkk();
+        void OP_4xkk();
+        void OP_5xy0();
+        void OP_6xkk();
+        void OP_7xkk();
+        void OP_8xy0();
+        void OP_8xy1();
+        void OP_8xy2();
+        void OP_8xy3();
+        void OP_8xy4();
+        void OP_8xy5();
+        void OP_8xy6();
+        void OP_8xy7();
+        void OP_8xyE();
+
+
 };
