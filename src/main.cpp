@@ -2,11 +2,20 @@
 #include <iostream>
 #include <print>
 
+#include "Chip8.h"
+
 int main(int argc, char* argv[]) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::println("SDL init error: {}", SDL_GetError());
         return 1;
     }
+
+    Chip8 chip8;
+    chip8.LoadROM("ROMs/Chip8 Picture.ch8");
+    std::println("ROM loaded successfully");
+
+
+
 
     SDL_Window* window = SDL_CreateWindow(
         "CHIP-8",

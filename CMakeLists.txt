@@ -12,10 +12,11 @@ execute_process(
 
 add_executable(chip8
     src/main.cpp
+    src/Chip8.cpp
 )
 
 target_include_directories(chip8 PRIVATE
-    include
+    src
     ${SDL2_PREFIX}/include
 )
 
