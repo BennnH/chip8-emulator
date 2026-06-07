@@ -3,12 +3,17 @@
 #include <cstdint>
 #include <string>
 #include <random>
+#include <array>
 
 class Chip8
 {
 public:
     Chip8() noexcept;
     void LoadROM(const std::string& filename);
+    void Cycle();
+
+    uint8_t keypad[16]{};
+    uint32_t display[64 * 32]{};
 
 private:
         uint8_t registers[16]{};
@@ -19,8 +24,6 @@ private:
         uint8_t sp{};
         uint8_t delayTimer{};
         uint8_t soundTimer{};
-        uint8_t keypad[16]{};
-        uint32_t display[64 * 32]{};
         uint16_t opcode{};
 
         std::mt19937 randGen;
@@ -61,5 +64,21 @@ private:
         void OP_Fx33();
         void OP_Fx55();
         void OP_Fx65();
+        void OP_NULL();
+
+
+        // Table functions
+        void Table0();
+        void Table8();
+        void TableE();
+        void TableF();
+
+        // Function pointer type alias and tables
+        using Chip8Func = void (Chip8::*)();
+        std::array<Chip8Func, 16>  table{};
+        std::array<Chip8Func, 16>  table0{};
+        std::array<Chip8Func, 16>  table8{};
+        std::array<Chip8Func, 16>  tableE{};
+        std::array<Chip8Func, 102> tableF{};
 
 };

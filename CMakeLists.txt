@@ -13,6 +13,7 @@ execute_process(
 add_executable(chip8
     src/main.cpp
     src/Chip8.cpp
+    src/Platform.cpp
 )
 
 target_include_directories(chip8 PRIVATE
