@@ -207,3 +207,147 @@ void Chip8::OP_8xyE() {
     registers[0xF] = (registers[Vx] & 0x80u) >> 7u;
     registers[Vx] <<= 1;
 }
+
+// SNE Vx, Vy
+void Chip8::OP_9xy0() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4;
+    if (registers[Vx] != registers[Vy]) {
+        pc += 2;
+    }
+}
+
+// LD I, addr
+void Chip8::OP_Annn() {
+    index_register = (opcode & 0x0FFFu);
+}
+
+// JP V0, addr
+void Chip8::OP_Bnnn() {
+    pc = (opcode & 0x0FFFu) + registers[0];
+}
+
+// RND Vx, byte
+void Chip8::OP_Cxkk() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    uint8_t kk = opcode & 0x00FFu;
+    registers[Vx] = randByte(randGen) & kk;
+}
+
+// DRW Vx, Vy, nibble
+void Chip8::OP_Dxyn() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4;
+    uint8_t n = opcode & 0x000Fu;
+
+    // Modulo with display resolution to wrap around.
+    uint8_t xPos = registers[Vx] % 64;
+    uint8_t yPos = registers[Vy] % 32;
+
+    registers[0xF] = 0;
+
+    for (uint8_t row = 0; row < n; row++) {
+        uint8_t rowOfSprite = memory[index_register + row];
+        for (uint8_t col = 0; col < 8; col++) {
+            if (rowOfSprite & (0x80u >> col)) {
+                uint32_t& pixel = display[((yPos + row) % 32) * 64 + ((xPos + col) % 64)];
+
+                // Set flag register if theres an overlap between new sprite and existing
+                if (pixel == 0xFFFFFFFF) {
+                    registers[0xF] = 1;
+                }
+
+                pixel ^= 0xFFFFFFFF;
+            }
+        }
+    }
+}
+
+// SKP Vx
+void Chip8::OP_Ex9E() {
+    uint8_t Vx= (opcode & 0x0F00u) >> 8;
+    if (keypad[registers[Vx]]) {
+        pc += 2;
+    }
+}
+
+// SKNP Vx
+void Chip8::OP_ExA1() {
+    uint8_t Vx= (opcode & 0x0F00u) >> 8;
+    if (!keypad[registers[Vx]]) {
+        pc += 2;
+    }
+}
+
+// LD Vx, DT
+void Chip8::OP_Fx07(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    registers[Vx] = delayTimer;
+}
+
+// LD Vx, K
+void Chip8::OP_Fx0A() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+
+    for (uint8_t i = 0; i < 16; i++) {
+        if (keypad[i]) {
+            registers[Vx] = i;
+            return;
+        }
+    }
+
+    pc -= 2;
+}
+
+// LD DT, Vx
+void Chip8::OP_Fx15(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    delayTimer = registers[Vx];
+}
+
+// LD ST, Vx
+void Chip8::OP_Fx18() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    soundTimer = registers[Vx];
+}
+
+// ADD I, Vx
+void Chip8::OP_Fx1E() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    index_register += registers[Vx];
+}
+
+// LD F, Vx
+void Chip8::OP_Fx29() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    index_register = FONTSET_START_ADDRESS + (registers[Vx] * 5);
+}
+
+// LD B, Vx
+void Chip8::OP_Fx33(){
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    uint8_t value = registers[Vx];
+
+    // Hundreds
+    memory[index_register] = value / 100;
+    // Tens
+    memory[index_register + 1] = (value / 10) % 10;
+    // Ones
+    memory[index_register + 2] = value % 10;
+}
+
+// LD [I], Vx
+void Chip8::OP_Fx55() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    for (uint8_t i = 0; i <= Vx; i++) {
+        memory[index_register + i] = registers[i];
+    }
+}
+
+// LD Vx, [I]
+void Chip8::OP_Fx65() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8;
+    for (uint8_t i = 0; i <= Vx; i++) {
+        registers[i] = memory[index_register + i];
+    }
+}
