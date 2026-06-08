@@ -12,15 +12,15 @@ public:
     void LoadROM(const std::string& filename);
     void Cycle();
 
-    uint8_t keypad[16]{};
-    uint32_t display[64 * 32]{};
+    std::array<uint8_t, 16> keypad{};
+    std::array<uint32_t, 64 * 32> display{};
 
 private:
-        uint8_t registers[16]{};
-        uint8_t memory[4096]{};
+        std::array<uint8_t, 16> registers{};
+        std::array<uint8_t, 4096> memory{};
         uint16_t index_register{};
         uint16_t pc{};
-        uint16_t stack[16]{};
+        std::array<uint16_t, 16> stack{};
         uint8_t sp{};
         uint8_t delayTimer{};
         uint8_t soundTimer{};

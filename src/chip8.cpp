@@ -10,7 +10,7 @@ constexpr unsigned int FONTSET_SIZE = 80;
 constexpr unsigned int FONTSET_START_ADDRESS = 0x50;
 
 
-constexpr uint8_t fontset[FONTSET_SIZE] =
+constexpr std::array<uint8_t, FONTSET_SIZE> fontset =
 {
 	0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
 	0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -124,7 +124,7 @@ Chip8::Chip8() noexcept
 
 // CLS
 void Chip8::OP_00E0() {
-    std::fill(std::begin(display), std::end(display), 0);
+    display.fill(0);
 }
 
 // RET

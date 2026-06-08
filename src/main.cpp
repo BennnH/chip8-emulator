@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         if (dt > cycleDelay) {
             lastCycleTime = currentCycleTime;
             chip8.Cycle();
-            platform.Update(chip8.display, sizeof(chip8.display[0]) * 64);
+            platform.Update(chip8.display.data(), sizeof(chip8.display[0]) * 64);
         }
     }
 

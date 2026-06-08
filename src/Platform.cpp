@@ -40,7 +40,7 @@ void Platform::Update(void const* buffer, int pitch)
 }
 
 
-bool Platform::ProcessInput(uint8_t* keys)
+bool Platform::ProcessInput(std::span<uint8_t, 16> keys)
 {
     bool quit = false;
 

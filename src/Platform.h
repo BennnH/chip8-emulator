@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <cstdint>
+#include <span>
 
 class Platform
 {
@@ -10,7 +11,7 @@ class Platform
         ~Platform();
 
         void Update(void const* buffer, int pitch);
-        bool ProcessInput(uint8_t* keys);
+        bool ProcessInput(std::span<uint8_t, 16> keys);
 
     private:
         SDL_Window* window{};
